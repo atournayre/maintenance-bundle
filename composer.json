@@ -1,0 +1,40 @@
+{
+  "name": "atournayre/maintenance-bundle",
+  "description": "Maintenance bundle for Symfony 4",
+  "type": "symfony-bundle",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Aurélien Tournayre",
+      "email": "aurelien.tournayre@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Atournayre\\MaintenanceBundle\\": ""
+    },
+    "exclude-from-classmap": [
+      "/Tests/"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "require": {
+    "php": "^7.2.9"
+  },
+  "require-dev": {
+  },
+  "conflict": {
+    "symfony/symfony": "*"
+  },
+  "extra": {
+    "symfony": {
+      "allow-contrib": false,
+      "require": "4.4.*"
+    }
+  }
+}

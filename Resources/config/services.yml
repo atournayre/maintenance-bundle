@@ -1,0 +1,18 @@
+services:
+  Atournayre\MaintenanceBundle\Service\MaintenanceService:
+    class: Atournayre\MaintenanceBundle\Service\MaintenanceService
+    arguments:
+      - '@parameter_bag'
+      - '@Atournayre\MaintenanceBundle\Service\EnvFileService'
+
+  Atournayre\MaintenanceBundle\Service\EnvFileService:
+    class: Atournayre\MaintenanceBundle\Service\EnvFileService
+
+  atournayre_maintenance_command:
+    class: Atournayre\MaintenanceBundle\Command\MaintenanceCommand
+    arguments:
+      - '@kernel'
+      - '@Atournayre\MaintenanceBundle\Service\MaintenanceService'
+      - '@parameter_bag'
+    tags:
+      - { name: console.command }
