@@ -2,6 +2,7 @@
 
 namespace Atournayre\MaintenanceBundle\Service;
 
+use Atournayre\Component\DotEnvEditor\DotEnvEditor;
 use Atournayre\MaintenanceBundle\Exception\MaintenanceDisableException;
 use Atournayre\MaintenanceBundle\Exception\MaintenanceEnableException;
 use Atournayre\MaintenanceBundle\Exception\MaintenanceInvalidIpException;
@@ -22,23 +23,23 @@ class MaintenanceService
      */
     private $parameterBag;
     /**
-     * @var EnvFileService
+     * @var DotEnvEditor
      */
-    private $envFileService;
+    private $dotEnvEditor;
 
-    public function __construct(ParameterBagInterface $parameterBag, EnvFileService $envFileService)
+    public function __construct(ParameterBagInterface $parameterBag)
     {
         $this->parameterBag = $parameterBag;
-        $this->envFileService = $envFileService;
+        $this->dotEnvEditor = new DotEnvEditor();
     }
 
     public function start(string $envPath, DateTime $startDateTime): void
     {
         try {
-            $this->envFileService->load($envPath);
-            $this->envFileService->add('MAINTENANCE_IS_ENABLED', 'true');
-            $this->envFileService->add('MAINTENANCE_START_DATETIME', $startDateTime->format('Y-m-d H:i:s'));
-            $this->envFileService->save();
+            $this->dotEnvEditor->load($envPath);
+            $this->dotEnvEditor->add('MAINTENANCE_IS_ENABLED', 'true');
+            $this->dotEnvEditor->add('MAINTENANCE_START_DATETIME', $startDateTime->format('Y-m-d H:i:s'));
+            $this->dotEnvEditor->save();
         } catch (Exception $exception) {
             throw new MaintenanceStartException();
         }
@@ -51,10 +52,10 @@ class MaintenanceService
     public function enable(string $envPath): void
     {
         try {
-            $this->envFileService->load($envPath);
-            $this->envFileService->add('MAINTENANCE_IS_ENABLED', 'true');
-            $this->envFileService->add('MAINTENANCE_START_DATETIME', (new DateTime())->format('Y-m-d H:i:s'));
-            $this->envFileService->save();
+            $this->dotEnvEditor->load($envPath);
+            $this->dotEnvEditor->add('MAINTENANCE_IS_ENABLED', 'true');
+            $this->dotEnvEditor->add('MAINTENANCE_START_DATETIME', (new DateTime())->format('Y-m-d H:i:s'));
+            $this->dotEnvEditor->save();
         } catch (Exception $exception) {
             throw new MaintenanceEnableException();
         }
@@ -67,9 +68,9 @@ class MaintenanceService
     public function disable(string $envPath): void
     {
         try {
-            $this->envFileService->load($envPath);
-            $this->envFileService->add('MAINTENANCE_IS_ENABLED', 'false');
-            $this->envFileService->save();
+            $this->dotEnvEditor->load($envPath);
+            $this->dotEnvEditor->add('MAINTENANCE_IS_ENABLED', 'false');
+            $this->dotEnvEditor->save();
         } catch (Exception $exception) {
             throw new MaintenanceDisableException();
         }
@@ -96,9 +97,9 @@ class MaintenanceService
         }
         array_push($authorizedIps, $ip);
 
-        $this->envFileService->load($envPath);
-        $this->envFileService->add('MAINTENANCE_AUTHORIZED_IPS', implode(',', $authorizedIps));
-        $this->envFileService->save();
+        $this->dotEnvEditor->load($envPath);
+        $this->dotEnvEditor->add('MAINTENANCE_AUTHORIZED_IPS', implode(',', $authorizedIps));
+        $this->dotEnvEditor->save();
     }
 
     /**
@@ -110,9 +111,9 @@ class MaintenanceService
     {
         $cleanedIps = $this->listAuthorizedIps($envPath);
 
-        $this->envFileService->load($envPath);
-        $this->envFileService->reset('MAINTENANCE_AUTHORIZED_IPS');
-        $this->envFileService->save();
+        $this->dotEnvEditor->load($envPath);
+        $this->dotEnvEditor->reset('MAINTENANCE_AUTHORIZED_IPS');
+        $this->dotEnvEditor->save();
         return $cleanedIps;
     }
 
@@ -123,8 +124,8 @@ class MaintenanceService
      */
     public function listAuthorizedIps(string $envPath): array
     {
-        $this->envFileService->load($envPath);
-        $authorizedIps = $this->envFileService->get('MAINTENANCE_AUTHORIZED_IPS');
+        $this->dotEnvEditor->load($envPath);
+        $authorizedIps = $this->dotEnvEditor->get('MAINTENANCE_AUTHORIZED_IPS');
         return empty($authorizedIps)
             ? []
             : explode(',', $authorizedIps);

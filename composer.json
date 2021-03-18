@@ -24,7 +24,8 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "require": {
-    "php": "^7.2.9"
+    "php": "^7.2.9",
+    "atournayre/dotenv-editor": "v1.*"
   },
   "require-dev": {
   },
