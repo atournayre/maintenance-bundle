@@ -12,3 +12,17 @@ services:
       - '@parameter_bag'
     tags:
       - { name: console.command }
+
+  atournayre_maintenance_listener:
+    class: Atournayre\MaintenanceBundle\Listener\MaintenanceListener
+    arguments:
+      - '@twig'
+      - '@atournayre_maintenance_checker'
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, method: 'onKernelRequest' }
+
+  atournayre_maintenance_checker:
+    class: Atournayre\MaintenanceBundle\Service\MaintenanceChecker
+    arguments:
+      - '@parameter_bag'
+      - '@request_stack'
