@@ -51,6 +51,15 @@ parameters:
   atournayre_maintenance.authorized_ips: '%env(MAINTENANCE_AUTHORIZED_IPS)%'
 ```
 
+Overriding templates
+---------------------
+
+Using Symfony 4.4.* ?
+```
+$ mkdir -p templates/bundles/AtournayreMaintenanceBundle
+$ cp -r vendor/atournayre/maintenance-bundle/Resources/views/. templates/bundles/AtournayreMaintenanceBundle
+```
+Templates are now ready for customization!
 
 Usage
 ----------
