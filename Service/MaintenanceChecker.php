@@ -23,6 +23,10 @@ class MaintenanceChecker
         $this->requestStack = $requestStack;
     }
 
+    /**
+     * @return bool
+     * @throws \Exception
+     */
     public function maintenanceIsEnabled(): bool
     {
         if (!$this->parameterBag->has('atournayre_maintenance.is_enabled')) {
@@ -42,13 +46,17 @@ class MaintenanceChecker
             && $this->clientIpIsNotAllowed();
     }
 
-    private function maintenanceStartTimeHasPassed()
+    /**
+     * @return bool
+     * @throws \Exception
+     */
+    private function maintenanceStartTimeHasPassed(): bool
     {
         $maintenanceStartDateTime = new \DateTime($this->parameterBag->get('atournayre_maintenance.start_date_time'));
         return (new \DateTime()) > $maintenanceStartDateTime;
     }
 
-    private function clientIpIsNotAllowed()
+    private function clientIpIsNotAllowed(): bool
     {
         $currentIP = $this->requestStack->getMasterRequest()->getClientIp();
         $authorizedIps = explode(',',$this->parameterBag->get('atournayre_maintenance.authorized_ips'));
