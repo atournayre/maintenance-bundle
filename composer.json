@@ -34,6 +34,7 @@
     "twig/twig": "^1.41|^2.10|^3.0"
   },
   "require-dev": {
+    "symfony/phpunit-bridge": "^4"
   },
   "conflict": {
     "symfony/symfony": "*"
