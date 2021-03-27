@@ -3,14 +3,11 @@
 namespace Atournayre\MaintenanceBundle\Service;
 
 use Atournayre\Component\DotEnvEditor\DotEnvEditor;
-use Atournayre\MaintenanceBundle\Exception\MaintenanceDisableException;
-use Atournayre\MaintenanceBundle\Exception\MaintenanceEnableException;
+use Atournayre\Component\DotEnvEditor\Exception\DotEnvEditorAddVariableTypeException;
 use Atournayre\MaintenanceBundle\Exception\MaintenanceInvalidIpException;
 use Atournayre\MaintenanceBundle\Exception\MaintenanceIpAlreadyDefinedException;
-use Atournayre\MaintenanceBundle\Exception\MaintenanceStartException;
 use DateTime;
 use Exception;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class MaintenanceService
 {
@@ -19,61 +16,49 @@ class MaintenanceService
     ];
 
     /**
-     * @var ParameterBagInterface
-     */
-    private $parameterBag;
-    /**
      * @var DotEnvEditor
      */
     private $dotEnvEditor;
 
-    public function __construct(ParameterBagInterface $parameterBag)
+    public function __construct()
     {
-        $this->parameterBag = $parameterBag;
         $this->dotEnvEditor = new DotEnvEditor();
     }
 
+    /**
+     * @param string   $envPath
+     * @param DateTime $startDateTime
+     * @throws DotEnvEditorAddVariableTypeException
+     */
     public function start(string $envPath, DateTime $startDateTime): void
     {
-        try {
-            $this->dotEnvEditor->load($envPath);
-            $this->dotEnvEditor->add('MAINTENANCE_IS_ENABLED', 'true');
-            $this->dotEnvEditor->add('MAINTENANCE_START_DATETIME', $startDateTime->format('Y-m-d H:i:s'));
-            $this->dotEnvEditor->save();
-        } catch (Exception $exception) {
-            throw new MaintenanceStartException();
-        }
+        $this->dotEnvEditor->load($envPath);
+        $this->dotEnvEditor->add('MAINTENANCE_IS_ENABLED', 'true');
+        $this->dotEnvEditor->add('MAINTENANCE_START_DATETIME', $startDateTime->format('Y-m-d H:i:s'));
+        $this->dotEnvEditor->save();
     }
 
     /**
      * @param string $envPath
-     * @throws MaintenanceEnableException
+     * @throws DotEnvEditorAddVariableTypeException
      */
     public function enable(string $envPath): void
     {
-        try {
-            $this->dotEnvEditor->load($envPath);
-            $this->dotEnvEditor->add('MAINTENANCE_IS_ENABLED', 'true');
-            $this->dotEnvEditor->add('MAINTENANCE_START_DATETIME', (new DateTime())->format('Y-m-d H:i:s'));
-            $this->dotEnvEditor->save();
-        } catch (Exception $exception) {
-            throw new MaintenanceEnableException();
-        }
+        $this->dotEnvEditor->load($envPath);
+        $this->dotEnvEditor->add('MAINTENANCE_IS_ENABLED', 'true');
+        $this->dotEnvEditor->add('MAINTENANCE_START_DATETIME', (new DateTime())->format('Y-m-d H:i:s'));
+        $this->dotEnvEditor->save();
     }
 
     /**
      * @param string $envPath
-     * @throws MaintenanceDisableException
+     * @throws DotEnvEditorAddVariableTypeException
      */
     public function disable(string $envPath): void
     {
-        try {
-            $this->dotEnvEditor->load($envPath);
-            $this->dotEnvEditor->add('MAINTENANCE_IS_ENABLED', 'false');
-            $this->dotEnvEditor->save();
-        } catch (Exception $exception) {
-            throw new MaintenanceDisableException();
-        }
+        $this->dotEnvEditor->load($envPath);
+        $this->dotEnvEditor->add('MAINTENANCE_IS_ENABLED', 'false');
+        $this->dotEnvEditor->save();
     }
 
     /**
@@ -81,6 +66,7 @@ class MaintenanceService
      * @param string $ip
      * @throws MaintenanceInvalidIpException
      * @throws MaintenanceIpAlreadyDefinedException
+     * @throws DotEnvEditorAddVariableTypeException
      */
     public function addIp(string $envPath, string $ip): void
     {

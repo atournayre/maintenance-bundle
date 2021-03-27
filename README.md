@@ -1,5 +1,6 @@
 Maintenance bundle
 =================
+[![Build Status](https://travis-ci.com/atournayre/maintenance-bundle.svg?branch=master)](https://travis-ci.com/atournayre/maintenance-bundle)
 
 The maintenance bundle helps managing software maintenance.
 
