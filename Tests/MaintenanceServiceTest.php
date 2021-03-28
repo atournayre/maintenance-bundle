@@ -24,7 +24,7 @@ class MaintenanceServiceTest extends TestCase
     {
         copy(__DIR__.'/datas/.env.php', self::PATH_TO_DOTENV_DOTTEST_DOTPHP);
         $this->maintenanceService = new MaintenanceService();
-        $this->dotEnvEditor = new DotEnvEditor();
+        $this->dotEnvEditor = new DotEnvEditor(self::PATH_TO_DOTENV_DOTTEST_DOTPHP);
     }
 
     protected function tearDown(): void
@@ -36,7 +36,7 @@ class MaintenanceServiceTest extends TestCase
     {
         $startDateTime = new \DateTime();
         $this->maintenanceService->start(self::PATH_TO_DOTENV_DOTTEST_DOTPHP, $startDateTime);
-        $this->dotEnvEditor->load(self::PATH_TO_DOTENV_DOTTEST_DOTPHP);
+        $this->dotEnvEditor->load();
         $this->assertEquals(
             $startDateTime->format('Y-m-d H:i:s'),
             (new \DateTime($this->dotEnvEditor->get('MAINTENANCE_START_DATETIME')))->format('Y-m-d H:i:s')
@@ -46,14 +46,14 @@ class MaintenanceServiceTest extends TestCase
     public function testEnable()
     {
         $this->maintenanceService->enable(self::PATH_TO_DOTENV_DOTTEST_DOTPHP);
-        $this->dotEnvEditor->load(self::PATH_TO_DOTENV_DOTTEST_DOTPHP);
+        $this->dotEnvEditor->load();
         $this->assertTrue($this->dotEnvEditor->get('MAINTENANCE_IS_ENABLED'));
     }
 
     public function testDisable()
     {
         $this->maintenanceService->disable(self::PATH_TO_DOTENV_DOTTEST_DOTPHP);
-        $this->dotEnvEditor->load(self::PATH_TO_DOTENV_DOTTEST_DOTPHP);
+        $this->dotEnvEditor->load();
         $this->assertFalse($this->dotEnvEditor->get('MAINTENANCE_IS_ENABLED'));
     }
 
@@ -72,7 +72,7 @@ class MaintenanceServiceTest extends TestCase
     public function testAddIpV4()
     {
         $this->maintenanceService->addIp(self::PATH_TO_DOTENV_DOTTEST_DOTPHP, '127.0.0.1');
-        $this->dotEnvEditor->load(self::PATH_TO_DOTENV_DOTTEST_DOTPHP);
+        $this->dotEnvEditor->load();
         $this->assertEquals('127.0.0.1', $this->dotEnvEditor->get('MAINTENANCE_AUTHORIZED_IPS'));
     }
 
@@ -86,7 +86,7 @@ class MaintenanceServiceTest extends TestCase
     public function testAddIpSpecialLocalhost()
     {
         $this->maintenanceService->addIp(self::PATH_TO_DOTENV_DOTTEST_DOTPHP, 'localhost');
-        $this->dotEnvEditor->load(self::PATH_TO_DOTENV_DOTTEST_DOTPHP);
+        $this->dotEnvEditor->load();
         $this->assertEquals('localhost', $this->dotEnvEditor->get('MAINTENANCE_AUTHORIZED_IPS'));
     }
 
@@ -104,7 +104,7 @@ class MaintenanceServiceTest extends TestCase
         $this->maintenanceService->cleanIps(self::PATH_TO_DOTENV_DOTTEST_DOTPHP);
         $this->maintenanceService->addIp(self::PATH_TO_DOTENV_DOTTEST_DOTPHP, '127.0.0.1');
 
-        $this->dotEnvEditor->load(self::PATH_TO_DOTENV_DOTTEST_DOTPHP);
+        $this->dotEnvEditor->load();
         $this->assertEquals('127.0.0.1', $this->dotEnvEditor->get('MAINTENANCE_AUTHORIZED_IPS'));
 
     }

@@ -16,26 +16,17 @@ class MaintenanceService
     ];
 
     /**
-     * @var DotEnvEditor
-     */
-    private $dotEnvEditor;
-
-    public function __construct()
-    {
-        $this->dotEnvEditor = new DotEnvEditor();
-    }
-
-    /**
      * @param string   $envPath
      * @param DateTime $startDateTime
      * @throws DotEnvEditorAddVariableTypeException
      */
     public function start(string $envPath, DateTime $startDateTime): void
     {
-        $this->dotEnvEditor->load($envPath);
-        $this->dotEnvEditor->add('MAINTENANCE_IS_ENABLED', 'true');
-        $this->dotEnvEditor->add('MAINTENANCE_START_DATETIME', $startDateTime->format('Y-m-d H:i:s'));
-        $this->dotEnvEditor->save();
+        $dotEnvEditor = new DotEnvEditor($envPath);
+        $dotEnvEditor->load();
+        $dotEnvEditor->add('MAINTENANCE_IS_ENABLED', 'true');
+        $dotEnvEditor->add('MAINTENANCE_START_DATETIME', $startDateTime->format('Y-m-d H:i:s'));
+        $dotEnvEditor->save();
     }
 
     /**
@@ -44,10 +35,11 @@ class MaintenanceService
      */
     public function enable(string $envPath): void
     {
-        $this->dotEnvEditor->load($envPath);
-        $this->dotEnvEditor->add('MAINTENANCE_IS_ENABLED', 'true');
-        $this->dotEnvEditor->add('MAINTENANCE_START_DATETIME', (new DateTime())->format('Y-m-d H:i:s'));
-        $this->dotEnvEditor->save();
+        $dotEnvEditor = new DotEnvEditor($envPath);
+        $dotEnvEditor->load();
+        $dotEnvEditor->add('MAINTENANCE_IS_ENABLED', 'true');
+        $dotEnvEditor->add('MAINTENANCE_START_DATETIME', (new DateTime())->format('Y-m-d H:i:s'));
+        $dotEnvEditor->save();
     }
 
     /**
@@ -56,9 +48,10 @@ class MaintenanceService
      */
     public function disable(string $envPath): void
     {
-        $this->dotEnvEditor->load($envPath);
-        $this->dotEnvEditor->add('MAINTENANCE_IS_ENABLED', 'false');
-        $this->dotEnvEditor->save();
+        $dotEnvEditor = new DotEnvEditor($envPath);
+        $dotEnvEditor->load();
+        $dotEnvEditor->add('MAINTENANCE_IS_ENABLED', 'false');
+        $dotEnvEditor->save();
     }
 
     /**
@@ -83,9 +76,10 @@ class MaintenanceService
         }
         array_push($authorizedIps, $ip);
 
-        $this->dotEnvEditor->load($envPath);
-        $this->dotEnvEditor->add('MAINTENANCE_AUTHORIZED_IPS', implode(',', $authorizedIps));
-        $this->dotEnvEditor->save();
+        $dotEnvEditor = new DotEnvEditor($envPath);
+        $dotEnvEditor->load();
+        $dotEnvEditor->add('MAINTENANCE_AUTHORIZED_IPS', implode(',', $authorizedIps));
+        $dotEnvEditor->save();
     }
 
     /**
@@ -97,9 +91,10 @@ class MaintenanceService
     {
         $cleanedIps = $this->listAuthorizedIps($envPath);
 
-        $this->dotEnvEditor->load($envPath);
-        $this->dotEnvEditor->reset('MAINTENANCE_AUTHORIZED_IPS');
-        $this->dotEnvEditor->save();
+        $dotEnvEditor = new DotEnvEditor($envPath);
+        $dotEnvEditor->load();
+        $dotEnvEditor->reset('MAINTENANCE_AUTHORIZED_IPS');
+        $dotEnvEditor->save();
         return $cleanedIps;
     }
 
@@ -110,8 +105,9 @@ class MaintenanceService
      */
     public function listAuthorizedIps(string $envPath): array
     {
-        $this->dotEnvEditor->load($envPath);
-        $authorizedIps = $this->dotEnvEditor->get('MAINTENANCE_AUTHORIZED_IPS');
+        $dotEnvEditor = new DotEnvEditor($envPath);
+        $dotEnvEditor->load();
+        $authorizedIps = $dotEnvEditor->get('MAINTENANCE_AUTHORIZED_IPS');
         return empty($authorizedIps)
             ? []
             : explode(',', $authorizedIps);
